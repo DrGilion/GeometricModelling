@@ -1,12 +1,12 @@
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
+#include <QApplication>
+#include <QPushButton>
 #include <stdio.h>
 #include <iostream>
 #include <math.h>
 #include <assert.h>
-#include <glm/glm.hpp>
 #include <vector>
+
+#include "mainwindow.h"
 
 #if !defined(BUFSIZE)
 #define BUFSIZE 512
@@ -15,18 +15,18 @@
 using namespace std;
 
 int num_points=4;
-glm::vec3* points = new glm::vec3[num_points];
-glm::vec3 translationVector;
-vector<glm::vec3> bezierPoints;
+//glm::vec3* points = new glm::vec3[num_points];
+//glm::vec3 translationVector;
+//vector<glm::vec3> bezierPoints;
 int picked_pos=-1;
 
-const GLfloat white[] = {1.0, 1.0, 1.0};
-const GLfloat black[] = {0.0, 0.0, 0.0};
-const GLfloat red[] = {1.0, 0.0, 0.0};
-const GLfloat green[] = {0.0, 1.0, 0.0};
-const GLfloat blue[] = {0.0, 0.0, 1.0};
+const float white[] = {1.0, 1.0, 1.0};
+const float black[] = {0.0, 0.0, 0.0};
+const float red[] = {1.0, 0.0, 0.0};
+const float green[] = {0.0, 1.0, 0.0};
+const float blue[] = {0.0, 0.0, 1.0};
 
-class BezierStruct{
+/*class BezierStruct{
 
 };
 
@@ -96,14 +96,14 @@ int processHits (GLint hits, GLuint buffer[]){
    int result=-1;
 
    ptr = (GLuint *) buffer;
-   for (i = 0; i < hits; i++) { /*  for each hit  */
+   for (i = 0; i < hits; i++) {
       names = *ptr;
 
       ptr++;
       ptr++; 
       ptr++;
       
-      for (j = 0; j < names; j++) { /*  for each name */
+      for (j = 0; j < names; j++) {
 	  printf ("%d ", *ptr);
       
 	 result=(int)*ptr;
@@ -246,23 +246,27 @@ void keyboard(unsigned char key, int x, int y){
 
 	}
 	
-}
+}*/
 
 int main(int argc, char** argv){
-    glutInit(&argc,argv);
+    /*glutInit(&argc,argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH );
     glutInitWindowPosition( 0, 0 );
     glutInitWindowSize( 600, 360 );
     glutCreateWindow( "GM Uebung SoSe 2018" );
 
-    init();
+    init();*/
+    QApplication app(argc, argv);
+    MainWindow window;
+    window.show();
 
-    glutMouseFunc(mousePress);
+    /*glutMouseFunc(mousePress);
     glutMotionFunc(mouseMove);
     glutKeyboardFunc(keyboard);
     glutReshapeFunc(reshape);
     glutDisplayFunc(display);
 	
-    glutMainLoop();
-    return 0;		
+    glutMainLoop();*/
+
+    return app.exec();
 }
