@@ -1,31 +1,28 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "bezierstruct.h"
+
 #include <QMainWindow>
 #include <QPainter>
 #include <QMouseEvent>
 #include <QPixmap>
+#include <QPoint>
+#include <vector>
+
+using namespace std;
 
 class MainWindow : public QMainWindow{
     Q_OBJECT
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(vector<QPoint>& controlpoints,int size = 800, QWidget *parent = 0);
 
-    const float white[] = {1.0, 1.0, 1.0};
-    const float black[] = {0.0, 0.0, 0.0};
-    const float red[] = {1.0, 0.0, 0.0};
-    const float green[] = {0.0, 1.0, 0.0};
-    const float blue[] = {0.0, 0.0, 1.0};
-
-    bool mousePressed;
-    bool drawStarted;
     const int pointSize = 10;
 
     void drawControlPoints();
     void drawControlPointLine();
     void drawBezierPolygon();
     void drawCurve();
-
 
     ~MainWindow();
 
@@ -39,8 +36,12 @@ signals:
 public slots:
 
 private:
+    int windowSize;
     QPainter painter;
     QPixmap mPix;
+    vector<QPoint> controlPoints;
+    Bezierstruct bezierPoints;
+    QPoint* currentMovingPoint = NULL;
 };
 
 #endif // MAINWINDOW_H

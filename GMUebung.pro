@@ -6,11 +6,7 @@ QT += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 SOURCES += gmuebung.cpp \
     mainwindow.cpp \
-    bezierstruct.cpp \
-    point.cpp \
-    line.cpp
+    bezierstruct.cpp
 HEADERS += \
     mainwindow.h \
-    bezierstruct.h \
-    point.h \
-    line.h
+    bezierstruct.h

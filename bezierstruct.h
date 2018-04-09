@@ -2,13 +2,17 @@
 #define BEZIERSTRUCT_H
 
 #include <vector>
-#include
+#include <QPoint>
 
+using namespace std;
 
 class Bezierstruct{
 public:
-    Bezierstruct();
+    Bezierstruct(vector<QPoint>& initialPoints, double subdivisionWeight = 0.5);
+    void calculateSubdivision();
 
+    double subdivisionWeight;
+    vector<vector<QPoint>> curvepoints;
 };
 
 #endif // BEZIERSTRUCT_H
