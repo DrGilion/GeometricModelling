@@ -11,6 +11,12 @@ class MainWindow : public QMainWindow{
 public:
     explicit MainWindow(QWidget *parent = 0);
 
+    const float white[] = {1.0, 1.0, 1.0};
+    const float black[] = {0.0, 0.0, 0.0};
+    const float red[] = {1.0, 0.0, 0.0};
+    const float green[] = {0.0, 1.0, 0.0};
+    const float blue[] = {0.0, 0.0, 1.0};
+
     bool mousePressed;
     bool drawStarted;
     const int pointSize = 10;
@@ -19,6 +25,7 @@ public:
     void drawControlPointLine();
     void drawBezierPolygon();
     void drawCurve();
+
 
     ~MainWindow();
 
