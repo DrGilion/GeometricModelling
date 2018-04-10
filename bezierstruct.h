@@ -8,7 +8,7 @@ using namespace std;
 
 class Bezierstruct{
 public:
-    Bezierstruct(vector<QPoint>& initialPoints, double subdivisionWeight = 0.5);
+    Bezierstruct(vector<QPoint> initialPoints, double subdivisionWeight = 0.5);
     void calculateSubdivision();
 
     double subdivisionWeight;

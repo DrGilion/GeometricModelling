@@ -15,7 +15,7 @@ using namespace std;
 class MainWindow : public QMainWindow{
     Q_OBJECT
 public:
-    explicit MainWindow(vector<QPoint>& controlpoints,int size = 800, QWidget *parent = 0);
+    explicit MainWindow(vector<QPoint> controlpoints,int size = 800, QWidget *parent = 0);
 
     const int pointSize = 10;
 

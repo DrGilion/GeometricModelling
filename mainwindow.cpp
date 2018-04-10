@@ -1,12 +1,10 @@
 #include "mainwindow.h"
 #include <iostream>
 
-MainWindow::MainWindow(vector<QPoint>& controlpoints, int size, QWidget *parent) : QMainWindow(parent),windowSize(size),controlPoints(controlpoints),bezierPoints(controlPoints){
+MainWindow::MainWindow(vector<QPoint> controlpoints, int size, QWidget *parent) : QMainWindow(parent),windowSize(size),controlPoints(controlpoints),bezierPoints(controlPoints){
     setFixedSize(size,size);
     mPix = QPixmap(size,size);
     mPix.fill(Qt::white);
-
-    //bezierPoints = Bezierstruct(controlPoints);
 }
 
 void MainWindow::drawControlPoints(){
@@ -26,7 +24,7 @@ void MainWindow::drawControlPointLine(){
     tempPainter.setPen(QPen(Qt::darkGreen,2));
 
     for(auto i = 1; i < controlPoints.size(); i++){
-        tempPainter.drawLine(QLine(controlPoints[i-1],controlPoints[i]));
+        tempPainter.drawLine(controlPoints[i-1],controlPoints[i]);
     }
 }
 
@@ -48,11 +46,16 @@ void MainWindow::drawCurve(){
     QPainter tempPainter(&mPix);
     tempPainter.setPen(QPen(Qt::black,3));
 
-    bezierPoints.calculateSubdivision();
+    bezierPoints = Bezierstruct(controlPoints);
 
     for(int iter = 0; iter < controlPoints.size()-1; iter++){
-        tempPainter.drawLine(bezierPoints.curvepoints[0][iter],bezierPoints.curvepoints[0][iter+1]);
+        tempPainter.drawLine(bezierPoints.curvepoints[iter][0],bezierPoints.curvepoints[iter+1][0]);
     }
+
+    for(int iter = 0; iter < controlPoints.size()-1; iter++){
+        tempPainter.drawLine(bezierPoints.curvepoints[controlPoints.size()-1-iter][iter],bezierPoints.curvepoints[controlPoints.size()-2-iter][iter+1]);
+    }
+
 
 }
 
@@ -65,7 +68,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
             break;
         }
     }
-    update();
+    //update();
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event){
@@ -80,7 +83,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event){
 void MainWindow::mouseReleaseEvent(QMouseEvent *event){
     std::cout <<"Release: " << "x: " << event->localPos().x() << " y: " << event->localPos().y() << std::endl;
     currentMovingPoint = NULL;
-    update();
+    //update();
 }
 
 void MainWindow::paintEvent(QPaintEvent* event){
