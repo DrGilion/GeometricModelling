@@ -72,14 +72,9 @@ void MainWindow::plotBezier(Bezierstruct bezier, int k){
         QPainter tempPainter(&mPix);
         tempPainter.setPen(QPen(Qt::black,3));
 
-        auto curve1 = bezier.getFirstBezierPartition();
-        for(int iter = 0; iter < curve1.size()-1; iter++){
-            tempPainter.drawLine(curve1[iter],curve1[iter+1]);
-        }
-
-        auto curve2 = bezier.getSecondBezierPartition();
-        for(int iter = 0; iter < curve2.size()-1; iter++){
-            tempPainter.drawLine(curve2[iter],curve2[iter+1]);
+        auto curve = bezier.getBezierPoints();
+        for(int i = 0; i < curve.size()-1; i++){
+            tempPainter.drawLine(curve[i],curve[i+1]);
         }
 
     }else{
