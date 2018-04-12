@@ -10,6 +10,9 @@ class Bezierstruct{
 public:
     Bezierstruct(vector<QPoint> initialPoints, double subdivisionWeight = 0.5);
     void calculateSubdivision();
+    vector<QPoint> getFirstBezierPartition();
+    vector<QPoint> getSecondBezierPartition();
+    vector<QPoint> getBezierPoints();
 
     double subdivisionWeight;
     vector<vector<QPoint>> curvepoints;

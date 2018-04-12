@@ -23,3 +23,30 @@ void Bezierstruct::calculateSubdivision(){
         }
     }
 }
+
+vector<QPoint> Bezierstruct::getFirstBezierPartition(){
+    vector<QPoint> result;
+    for(int iter = 0; iter < curvepoints[0].size(); iter++){
+        result.push_back(curvepoints[iter][0]);
+    }
+    return result;
+}
+
+vector<QPoint> Bezierstruct::getSecondBezierPartition(){
+    vector<QPoint> result;
+    for(int iter = 0; iter < curvepoints[0].size(); iter++){
+       result.push_back(curvepoints[curvepoints[0].size()-1-iter][iter]);
+    }
+    return result;
+}
+
+vector<QPoint> Bezierstruct::getBezierPoints(){
+    vector<QPoint> result;
+    for(int iter = 0; iter < curvepoints[0].size(); iter++){
+        result.push_back(curvepoints[iter][0]);
+    }
+    for(int iter = 0; iter < curvepoints[0].size(); iter++){
+       result.push_back(curvepoints[curvepoints[0].size()-1-iter][iter]);
+    }
+    return result;
+}

@@ -1,7 +1,8 @@
 #include "mainwindow.h"
 #include <iostream>
 
-MainWindow::MainWindow(vector<QPoint> controlpoints, int size, QWidget *parent) : QMainWindow(parent),windowSize(size),controlPoints(controlpoints),bezierPoints(controlPoints){
+MainWindow::MainWindow(vector<QPoint> controlpoints1,vector<QPoint> controlpoints2, int size, QWidget *parent) : QMainWindow(parent),windowSize(size),
+    controlPoints1(controlpoints1),controlPoints2(controlpoints2){
     setFixedSize(size,size);
     mPix = QPixmap(size,size);
     mPix.fill(Qt::white);
@@ -12,7 +13,11 @@ void MainWindow::drawControlPoints(){
     QPainter tempPainter(&mPix);
     tempPainter.setPen(QPen(Qt::red,10));
 
-    for(auto const& value : controlPoints){
+    for(auto const& value : controlPoints1){
+        tempPainter.drawPoint(value);
+    }
+
+    for(auto const& value : controlPoints2){
         tempPainter.drawPoint(value);
     }
 
@@ -21,10 +26,14 @@ void MainWindow::drawControlPoints(){
 void MainWindow::drawControlPointLine(){
 
     QPainter tempPainter(&mPix);
-    tempPainter.setPen(QPen(Qt::darkGreen,2));
+    tempPainter.setPen(QPen(Qt::darkGreen,1));
 
-    for(auto i = 1; i < controlPoints.size(); i++){
-        tempPainter.drawLine(controlPoints[i-1],controlPoints[i]);
+    for(auto i = 1; i < controlPoints1.size(); i++){
+        tempPainter.drawLine(controlPoints1[i-1],controlPoints1[i]);
+    }
+
+    for(auto i = 1; i < controlPoints2.size(); i++){
+        tempPainter.drawLine(controlPoints2[i-1],controlPoints2[i]);
     }
 }
 
@@ -43,25 +52,53 @@ void MainWindow::drawBezierPolygon(){
 
 void MainWindow::drawCurve(){
 
-    QPainter tempPainter(&mPix);
-    tempPainter.setPen(QPen(Qt::black,3));
 
-    bezierPoints = Bezierstruct(controlPoints);
 
-    for(int iter = 0; iter < controlPoints.size()-1; iter++){
-        tempPainter.drawLine(bezierPoints.curvepoints[iter][0],bezierPoints.curvepoints[iter+1][0]);
-    }
+    Bezierstruct bezier1(controlPoints1);
 
-    for(int iter = 0; iter < controlPoints.size()-1; iter++){
-        tempPainter.drawLine(bezierPoints.curvepoints[controlPoints.size()-1-iter][iter],bezierPoints.curvepoints[controlPoints.size()-2-iter][iter+1]);
-    }
+
+    plotBezier(bezier1,6);
+
+
+    Bezierstruct bezier2(controlPoints2);
+
+    plotBezier(bezier2,6);
 
 
 }
 
+void MainWindow::plotBezier(Bezierstruct bezier, int k){
+    if(k == 0){
+        QPainter tempPainter(&mPix);
+        tempPainter.setPen(QPen(Qt::black,3));
+
+        auto curve1 = bezier.getFirstBezierPartition();
+        for(int iter = 0; iter < curve1.size()-1; iter++){
+            tempPainter.drawLine(curve1[iter],curve1[iter+1]);
+        }
+
+        auto curve2 = bezier.getSecondBezierPartition();
+        for(int iter = 0; iter < curve2.size()-1; iter++){
+            tempPainter.drawLine(curve2[iter],curve2[iter+1]);
+        }
+
+    }else{
+        Bezierstruct newbezier(bezier.getBezierPoints());
+        plotBezier(Bezierstruct(newbezier.getFirstBezierPartition()),k-1);
+        plotBezier(Bezierstruct(newbezier.getSecondBezierPartition()),k-1);
+    }
+}
+
 void MainWindow::mousePressEvent(QMouseEvent *event){
     std::cout <<"Press: "<< "x: " << event->localPos().x() << " y: " << event->localPos().y() << std::endl;
-    for(QPoint& value : controlPoints){
+    for(QPoint& value : controlPoints1){
+        if(value.x() - pointSize < event->localPos().x() && value.x() + pointSize > event->localPos().x() &&
+           value.y() - pointSize < event->localPos().y() && value.y() + pointSize > event->localPos().y() ){
+            currentMovingPoint = &value;
+            break;
+        }
+    }
+    for(QPoint& value : controlPoints2){
         if(value.x() - pointSize < event->localPos().x() && value.x() + pointSize > event->localPos().x() &&
            value.y() - pointSize < event->localPos().y() && value.y() + pointSize > event->localPos().y() ){
             currentMovingPoint = &value;

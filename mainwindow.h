@@ -15,7 +15,7 @@ using namespace std;
 class MainWindow : public QMainWindow{
     Q_OBJECT
 public:
-    explicit MainWindow(vector<QPoint> controlpoints,int size = 800, QWidget *parent = 0);
+    explicit MainWindow(vector<QPoint> controlpoints1,vector<QPoint> controlpoints2,int size = 800, QWidget *parent = 0);
 
     const int pointSize = 10;
 
@@ -23,6 +23,7 @@ public:
     void drawControlPointLine();
     void drawBezierPolygon();
     void drawCurve();
+    void plotBezier(Bezierstruct bezier,int k);
 
     ~MainWindow();
 
@@ -39,8 +40,9 @@ private:
     int windowSize;
     QPainter painter;
     QPixmap mPix;
-    vector<QPoint> controlPoints;
-    Bezierstruct bezierPoints;
+
+    vector<QPoint> controlPoints1;
+    vector<QPoint> controlPoints2;
     QPoint* currentMovingPoint = NULL;
 };
 
