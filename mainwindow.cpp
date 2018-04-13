@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include <iostream>
 
-MainWindow::MainWindow(vector<QPoint> controlpoints1,vector<QPoint> controlpoints2, int size, QWidget *parent) : QMainWindow(parent),windowSize(size),
+MainWindow::MainWindow(PointList controlpoints1,PointList controlpoints2, int size, QWidget *parent) : QMainWindow(parent),windowSize(size),
     controlPoints1(controlpoints1),controlPoints2(controlpoints2){
     setFixedSize(size,size);
     mPix = QPixmap(size,size);
@@ -24,76 +24,93 @@ void MainWindow::drawControlPoints(){
 }
 
 void MainWindow::drawControlPointLine(){
-
+    size_t size1 = controlPoints1.size();
+    size_t size2 = controlPoints2.size();
     QPainter tempPainter(&mPix);
     tempPainter.setPen(QPen(Qt::darkGreen,1));
 
-    for(auto i = 1; i < controlPoints1.size(); i++){
+    for(auto i = 1; i < size1; i++){
         tempPainter.drawLine(controlPoints1[i-1],controlPoints1[i]);
     }
 
-    for(auto i = 1; i < controlPoints2.size(); i++){
+    for(auto i = 1; i < size2; i++){
         tempPainter.drawLine(controlPoints2[i-1],controlPoints2[i]);
     }
 }
 
 void MainWindow::drawBezierPolygon(){
-    /*glColor3fv(blue);
-
-    glBegin(GL_POLYGON);
-
-    for(int i=0;i<num_points;i++)	{
-        glVertex3f((GLfloat)points[i].x,(GLfloat)points[i].y,(GLfloat)points[i].z);
-    }
-
-    glEnd();*/
 
 }
 
 void MainWindow::drawCurve(){
 
-
-
-    Bezierstruct bezier1(controlPoints1);
-
-
-    plotBezier(bezier1,6);
-
-
-    Bezierstruct bezier2(controlPoints2);
-
-    plotBezier(bezier2,6);
-
+    plotBezier(controlPoints1,8);
+    plotBezier(controlPoints2,8);
 
 }
 
-void MainWindow::plotBezier(Bezierstruct bezier, int k){
+void MainWindow::plotBezier(PointList curve,int k){
     if(k == 0){
         QPainter tempPainter(&mPix);
-        tempPainter.setPen(QPen(Qt::black,3));
+        tempPainter.setPen(QPen(Qt::black,2));
 
-        auto curve = bezier.getBezierPoints();
         for(int i = 0; i < curve.size()-1; i++){
             tempPainter.drawLine(curve[i],curve[i+1]);
         }
 
     }else{
-        Bezierstruct newbezier(bezier.getBezierPoints());
-        plotBezier(Bezierstruct(newbezier.getFirstBezierPartition()),k-1);
-        plotBezier(Bezierstruct(newbezier.getSecondBezierPartition()),k-1);
+        pair<PointList,PointList> points = deCasteljau(curve);
+        plotBezier(points.first,k-1);
+        plotBezier(points.second,k-1);
     }
+}
+
+bool MainWindow::isFlat(PointList points){
+    return false;
+}
+
+pair<PointList,PointList> MainWindow::deCasteljau(PointList points){
+    size_t pointSize = points.size();
+    vector<PointList> curvepoints;
+    curvepoints.push_back(points);
+
+    for(int i = 0 ; i < pointSize-1; i++){
+        curvepoints.push_back(PointList(pointSize));
+    }
+
+    for(int iter = 1; iter < pointSize; iter++){
+        for(int pos = 0; pos < pointSize - iter; pos++){
+            QPointF result(
+                (curvepoints[iter-1][pos].x() + curvepoints[iter-1][pos+1].x()) /2.0,
+                (curvepoints[iter-1][pos].y() + curvepoints[iter-1][pos+1].y()) /2.0
+            );
+            curvepoints[iter][pos] = result;
+        }
+    }
+
+    PointList curve1;
+    for(int iter = 0; iter < pointSize; iter++){
+        curve1.push_back(curvepoints[iter][0]);
+    }
+
+    PointList curve2;
+    for(int iter = 0; iter < pointSize; iter++){
+       curve2.push_back(curvepoints[curvepoints[0].size()-1-iter][iter]);
+    }
+
+    return make_pair(curve1,curve2);
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event){
     std::cout <<"Press: "<< "x: " << event->localPos().x() << " y: " << event->localPos().y() << std::endl;
-    for(QPoint& value : controlPoints1){
+    for(QPointF& value : controlPoints1){
         if(value.x() - pointSize < event->localPos().x() && value.x() + pointSize > event->localPos().x() &&
            value.y() - pointSize < event->localPos().y() && value.y() + pointSize > event->localPos().y() ){
             currentMovingPoint = &value;
             break;
         }
     }
-    for(QPoint& value : controlPoints2){
+    for(QPointF& value : controlPoints2){
         if(value.x() - pointSize < event->localPos().x() && value.x() + pointSize > event->localPos().x() &&
            value.y() - pointSize < event->localPos().y() && value.y() + pointSize > event->localPos().y() ){
             currentMovingPoint = &value;

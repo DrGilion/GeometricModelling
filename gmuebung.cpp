@@ -1,5 +1,5 @@
 #include <QApplication>
-#include <QPoint>
+#include <QPointF>
 #include <stdio.h>
 #include <iostream>
 #include <math.h>
@@ -11,8 +11,8 @@
 int main(int argc, char** argv){
 
     QApplication app(argc, argv);
-    vector<QPoint> firstCurve {QPoint(50,50),QPoint(600,600),QPoint(450,750),QPoint(70,650),QPoint(600,200)};
-    vector<QPoint> secondCurve {QPoint(50,300),QPoint(200,300),QPoint(170,70),QPoint(300,250),QPoint(500,120)};
+    vector<QPointF> firstCurve {QPointF(50.0,50.0),QPointF(600.0,600.0),QPointF(450.0,750.0),QPointF(70.0,650.0),QPointF(600.0,200.0)};
+    vector<QPointF> secondCurve {QPointF(50.0,300.0),QPointF(200.0,300.0),QPointF(170.0,70.0),QPointF(300.0,250.0),QPointF(500.0,120.0)};
     MainWindow window(firstCurve,secondCurve);
     window.show();
 
