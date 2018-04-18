@@ -29,11 +29,11 @@ void MainWindow::drawControlPointLine(){
     QPainter tempPainter(&mPix);
     tempPainter.setPen(QPen(Qt::darkGreen,1));
 
-    for(auto i = 1; i < size1; i++){
+    for(int i = 1; i < size1; i++){
         tempPainter.drawLine(controlPoints1[i-1],controlPoints1[i]);
     }
 
-    for(auto i = 1; i < size2; i++){
+    for(int i = 1; i < size2; i++){
         tempPainter.drawLine(controlPoints2[i-1],controlPoints2[i]);
     }
 }
@@ -44,8 +44,8 @@ void MainWindow::drawBezierPolygon(){
 
 void MainWindow::drawCurve(){
 
-    plotBezier(controlPoints1,8);
-    plotBezier(controlPoints2,8);
+    plotBezier(controlPoints1,6);
+    plotBezier(controlPoints2,6);
 
 }
 
@@ -65,8 +65,12 @@ void MainWindow::plotBezier(PointList curve,int k){
     }
 }
 
-bool MainWindow::isFlat(PointList points){
+bool MainWindow::isFlat(const PointList& points) const{
     return false;
+}
+
+QPointF MainWindow::pointBetweenPoints(const QPointF& p1,const QPointF& p2, qreal ratio) const{
+    return  p1 + ((p2 - p1) * ratio);
 }
 
 pair<PointList,PointList> MainWindow::deCasteljau(PointList points){
@@ -80,10 +84,7 @@ pair<PointList,PointList> MainWindow::deCasteljau(PointList points){
 
     for(int iter = 1; iter < pointSize; iter++){
         for(int pos = 0; pos < pointSize - iter; pos++){
-            QPointF result(
-                (curvepoints[iter-1][pos].x() + curvepoints[iter-1][pos+1].x()) /2.0,
-                (curvepoints[iter-1][pos].y() + curvepoints[iter-1][pos+1].y()) /2.0
-            );
+            QPointF result = pointBetweenPoints(curvepoints[iter-1][pos], curvepoints[iter-1][pos+1]);
             curvepoints[iter][pos] = result;
         }
     }

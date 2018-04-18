@@ -27,7 +27,8 @@ public:
     void drawCurve();
     void plotBezier(PointList,int k);
     pair<PointList,PointList> deCasteljau(PointList curve);
-    bool isFlat(PointList points);
+    bool isFlat(const PointList& points) const;
+    QPointF pointBetweenPoints(const QPointF& p1,const QPointF& p2, qreal ratio = 0.5) const;
 
 
     ~MainWindow();
