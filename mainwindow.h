@@ -25,10 +25,11 @@ public:
     void drawControlPointLine();
     void drawBezierPolygon();
     void drawCurve();
-    void plotBezier(PointList,int k);
+    void plotBezier(PointList curve);
     pair<PointList,PointList> deCasteljau(PointList curve);
     bool isFlat(const PointList& points) const;
-    QPointF pointBetweenPoints(const QPointF& p1,const QPointF& p2, qreal ratio = 0.5) const;
+    QPointF lerpPoints(const QPointF& p1,const QPointF& p2, qreal ratio = 0.5) const;
+    void intersect(PointList list1,PointList list2);
 
 
     ~MainWindow();

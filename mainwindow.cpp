@@ -1,5 +1,7 @@
 #include "mainwindow.h"
+#include "axisalignedboundingbox.h"
 #include <iostream>
+#include <QLineF>
 
 MainWindow::MainWindow(PointList controlpoints1,PointList controlpoints2, int size, QWidget *parent) : QMainWindow(parent),windowSize(size),
     controlPoints1(controlpoints1),controlPoints2(controlpoints2){
@@ -44,13 +46,13 @@ void MainWindow::drawBezierPolygon(){
 
 void MainWindow::drawCurve(){
 
-    plotBezier(controlPoints1,6);
-    plotBezier(controlPoints2,6);
+    plotBezier(controlPoints1);
+    plotBezier(controlPoints2);
 
 }
 
-void MainWindow::plotBezier(PointList curve,int k){
-    if(k == 0){
+void MainWindow::plotBezier(PointList curve){
+    if(isFlat(curve)){
         QPainter tempPainter(&mPix);
         tempPainter.setPen(QPen(Qt::black,2));
 
@@ -60,17 +62,39 @@ void MainWindow::plotBezier(PointList curve,int k){
 
     }else{
         pair<PointList,PointList> points = deCasteljau(curve);
-        plotBezier(points.first,k-1);
-        plotBezier(points.second,k-1);
+        plotBezier(points.first);
+        plotBezier(points.second);
     }
 }
 
 bool MainWindow::isFlat(const PointList& points) const{
-    return false;
+    double maxFlatness = 1.0;
+    for(int i = 1; i< points.size()-1; ++i){
+        double flatness = QLineF(points[i+1] - points[i],points[i] - points[i-1]).length();
+        if(flatness < maxFlatness){
+            maxFlatness = flatness;
+        }
+    }
+    return maxFlatness < epsilon;
 }
 
-QPointF MainWindow::pointBetweenPoints(const QPointF& p1,const QPointF& p2, qreal ratio) const{
+QPointF MainWindow::lerpPoints(const QPointF& p1,const QPointF& p2, qreal ratio) const{
     return  p1 + ((p2 - p1) * ratio);
+}
+
+void MainWindow::intersect(PointList list1, PointList list2){
+
+    if(AxisAlignedBoundingBox(list1).intersects(AxisAlignedBoundingBox(list2))){
+        if(isFlat(list1)){
+            //compute composite bezier polygon for first PointList
+        }else{
+            if(isFlat(list2)){
+                //compute composite bezier polygon for second PointList
+            }else{
+                //intersect points
+            }
+        }
+    }
 }
 
 pair<PointList,PointList> MainWindow::deCasteljau(PointList points){
@@ -84,7 +108,7 @@ pair<PointList,PointList> MainWindow::deCasteljau(PointList points){
 
     for(int iter = 1; iter < pointSize; iter++){
         for(int pos = 0; pos < pointSize - iter; pos++){
-            QPointF result = pointBetweenPoints(curvepoints[iter-1][pos], curvepoints[iter-1][pos+1]);
+            QPointF result = lerpPoints(curvepoints[iter-1][pos], curvepoints[iter-1][pos+1]);
             curvepoints[iter][pos] = result;
         }
     }
