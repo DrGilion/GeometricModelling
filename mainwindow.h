@@ -19,29 +19,27 @@ public:
     explicit MainWindow(PointList controlpoints1,PointList controlpoints2,int size = 800, QWidget *parent = 0);
 
     constexpr static int pointSize = 10;
-    constexpr static double epsilon = 0.001;
+    constexpr static double epsilon = 0.05;
 
     void drawControlPoints();
     void drawControlPointLine();
-    void drawBezierPolygon();
+    void drawIntersections();
     void drawCurve();
+    void drawBoundingBoxes();
     void plotBezier(PointList curve);
-    pair<PointList,PointList> deCasteljau(PointList curve);
+    pair<PointList,PointList> deCasteljau(PointList curve)const;
     bool isFlat(const PointList& points) const;
     QPointF lerpPoints(const QPointF& p1,const QPointF& p2, qreal ratio = 0.5) const;
-    void intersect(PointList list1,PointList list2);
+    void intersect(PointList list1,PointList list2,vector<QRectF>& intersections);
 
 
-    ~MainWindow();
+    ~MainWindow() = default;
 
 protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent *event);
-signals:
-
-public slots:
 
 private:
     int windowSize;
@@ -50,6 +48,7 @@ private:
 
     PointList controlPoints1;
     PointList controlPoints2;
+    vector<PointList> curveSegments;
     QPointF* currentMovingPoint = NULL;
 };
 

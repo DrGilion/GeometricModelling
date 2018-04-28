@@ -40,19 +40,44 @@ void MainWindow::drawControlPointLine(){
     }
 }
 
-void MainWindow::drawBezierPolygon(){
+void MainWindow::drawIntersections(){
+    QPainter tempPainter(&mPix);
+    tempPainter.setPen(QPen(Qt::yellow,5));
 
+    //calculate intersection points
+    vector<QRectF> intersections;
+    for(int i = 0; i < curveSegments.size(); i++){
+        for(int j = 0; j < curveSegments.size(); j++){
+            if(i != j){
+                intersect(curveSegments[i],curveSegments[j],intersections);
+            }
+        }
+    }
+
+    for(auto&& value : intersections){
+        tempPainter.drawRect(value);
+    }
+    cout<< "number of intersections: " <<intersections.size() << endl;
 }
 
 void MainWindow::drawCurve(){
-
     plotBezier(controlPoints1);
     plotBezier(controlPoints2);
+}
 
+void MainWindow::drawBoundingBoxes(){
+    QPainter tempPainter(&mPix);
+    tempPainter.setPen(QPen(Qt::blue,1));
+
+    for(auto&& value : curveSegments){
+        tempPainter.drawRect(AxisAlignedBoundingBox(value).rectangle);
+    }
 }
 
 void MainWindow::plotBezier(PointList curve){
+
     if(isFlat(curve)){
+        curveSegments.push_back(curve);
         QPainter tempPainter(&mPix);
         tempPainter.setPen(QPen(Qt::black,2));
 
@@ -82,22 +107,31 @@ QPointF MainWindow::lerpPoints(const QPointF& p1,const QPointF& p2, qreal ratio)
     return  p1 + ((p2 - p1) * ratio);
 }
 
-void MainWindow::intersect(PointList list1, PointList list2){
+void MainWindow::intersect(PointList list1, PointList list2,vector<QRectF>& intersections){
+    AxisAlignedBoundingBox box1(list1);
+    AxisAlignedBoundingBox box2(list2);
 
-    if(AxisAlignedBoundingBox(list1).intersects(AxisAlignedBoundingBox(list2))){
-        if(isFlat(list1)){
+    if(box1.intersects(box2)){
+        if(!isFlat(list1)){
             //compute composite bezier polygon for first PointList
+            pair<PointList,PointList> points = deCasteljau(list1);
+            intersect(points.first,list2,intersections);
+            intersect(points.second,list2,intersections);
         }else{
-            if(isFlat(list2)){
+            if(!isFlat(list2)){
                 //compute composite bezier polygon for second PointList
+                pair<PointList,PointList> points = deCasteljau(list2);
+                intersect(list1,points.first,intersections);
+                intersect(list1,points.second,intersections);
             }else{
                 //intersect points
+                intersections.push_back(box1.intersected(box2));
             }
         }
     }
 }
 
-pair<PointList,PointList> MainWindow::deCasteljau(PointList points){
+pair<PointList,PointList> MainWindow::deCasteljau(PointList points)const {
     size_t pointSize = points.size();
     vector<PointList> curvepoints;
     curvepoints.push_back(points);
@@ -128,14 +162,14 @@ pair<PointList,PointList> MainWindow::deCasteljau(PointList points){
 
 void MainWindow::mousePressEvent(QMouseEvent *event){
     std::cout <<"Press: "<< "x: " << event->localPos().x() << " y: " << event->localPos().y() << std::endl;
-    for(QPointF& value : controlPoints1){
+    for(auto&& value : controlPoints1){
         if(value.x() - pointSize < event->localPos().x() && value.x() + pointSize > event->localPos().x() &&
            value.y() - pointSize < event->localPos().y() && value.y() + pointSize > event->localPos().y() ){
             currentMovingPoint = &value;
             break;
         }
     }
-    for(QPointF& value : controlPoints2){
+    for(auto&& value : controlPoints2){
         if(value.x() - pointSize < event->localPos().x() && value.x() + pointSize > event->localPos().x() &&
            value.y() - pointSize < event->localPos().y() && value.y() + pointSize > event->localPos().y() ){
             currentMovingPoint = &value;
@@ -164,15 +198,14 @@ void MainWindow::paintEvent(QPaintEvent* event){
     painter.begin(this);
     mPix.fill(Qt::white);
 
-    drawBezierPolygon();
+    curveSegments.clear();
+
     drawControlPointLine();
     drawControlPoints();
     drawCurve();
+    //drawBoundingBoxes();
+    drawIntersections();
 
     painter.drawPixmap(0,0,mPix);
     painter.end();
-}
-
-MainWindow::~MainWindow(){
-
 }

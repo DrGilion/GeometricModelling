@@ -11,8 +11,11 @@ class AxisAlignedBoundingBox{
 public:
     AxisAlignedBoundingBox(PointList list);
     bool intersects(const AxisAlignedBoundingBox& other) const;
+    QRectF intersected(const AxisAlignedBoundingBox& other) const;
 
     QRectF rectangle;
+
+    ~AxisAlignedBoundingBox() = default;
 };
 
 #endif // AXISALIGNEDBOUNDINGBOX_H

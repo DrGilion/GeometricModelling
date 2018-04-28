@@ -6,9 +6,7 @@ QT += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 SOURCES += gmuebung.cpp \
     mainwindow.cpp \
-    bezierstruct.cpp \
     axisalignedboundingbox.cpp
 HEADERS += \
     mainwindow.h \
-    bezierstruct.h \
     axisalignedboundingbox.h
