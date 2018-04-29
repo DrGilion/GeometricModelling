@@ -16,7 +16,7 @@ using PointList2D = vector<PointList>;
 
 namespace bezier{
 
-    static double EPSILON = 0.1;
+    static double EPSILON = 0.5;
 
     bool isFlat(const PointList& points){
         double maxFlatness = numeric_limits<double>::max();
