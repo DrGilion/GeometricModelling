@@ -3,11 +3,59 @@
 #include <iostream>
 #include <QLineF>
 
-MainWindow::MainWindow(PointList controlpoints1,PointList controlpoints2, int size, QWidget *parent) : QMainWindow(parent),windowSize(size),
-    controlPoints1(controlpoints1),controlPoints2(controlpoints2){
-    setFixedSize(size,size);
+MainWindow::MainWindow(PointList2D pControlpoints, int size, QWidget *parent) : QMainWindow(parent),windowSize(size), controlPoints(pControlpoints){
+    generateGUI();
     mPix = QPixmap(size,size);
     mPix.fill(Qt::white);
+}
+
+void MainWindow::generateGUI(){
+    this->resize(windowSize+200,windowSize);
+    this->setCentralWidget(centralWidget);
+
+    topLayout->addWidget(imageLabel);
+    topLayout->addWidget(optionsWidget);
+
+    imageLabel->setFixedSize(windowSize,windowSize);
+    imageLabel->setPixmap(mPix);
+    imageLabel->setBackgroundRole(QPalette::Base);
+    imageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+
+    optionsWidget->setFixedSize(200,windowSize);
+
+    optionsLayout->addRow("Epsilon:",epsilonOption);
+    QObject::connect(epsilonOption,QLineEdit::returnPressed,this,[&]{
+        epsilon = epsilonOption->text().toDouble();
+        update();
+    });
+
+    controlStructureBox->setChecked(drawingControlStructure);
+    optionsLayout->addRow("draw control structure :",controlStructureBox );
+    QObject::connect(controlStructureBox,QCheckBox::toggled,this,[&](bool val){
+        drawingControlStructure = val;
+        update();
+    });
+
+    curveBox->setChecked(drawingCurve);
+    optionsLayout->addRow("draw curve :",curveBox );
+    QObject::connect(curveBox,QCheckBox::toggled,this,[&](bool val){
+        drawingCurve = val;
+        update();
+    });
+
+    intersectionsBox->setChecked(drawingIntersections);
+    optionsLayout->addRow("draw intersections :",intersectionsBox );
+    QObject::connect(intersectionsBox,QCheckBox::toggled,this,[&](bool val){
+        drawingIntersections = val;
+        update();
+    });
+
+    BoundingBoxesBox->setChecked(drawingBoundingBoxes);
+    optionsLayout->addRow("draw bounding boxes :",BoundingBoxesBox );
+    QObject::connect(BoundingBoxesBox,QCheckBox::toggled,this,[&](bool val){
+        drawingBoundingBoxes = val;
+        update();
+    });
 }
 
 void MainWindow::drawControlPoints(){
@@ -15,28 +63,22 @@ void MainWindow::drawControlPoints(){
     QPainter tempPainter(&mPix);
     tempPainter.setPen(QPen(Qt::red,10));
 
-    for(auto const& value : controlPoints1){
-        tempPainter.drawPoint(value);
-    }
-
-    for(auto const& value : controlPoints2){
-        tempPainter.drawPoint(value);
+    for(auto&& list : controlPoints){
+        for(auto&& point : list){
+            tempPainter.drawPoint(point);
+        }
     }
 
 }
 
 void MainWindow::drawControlPointLine(){
-    size_t size1 = controlPoints1.size();
-    size_t size2 = controlPoints2.size();
     QPainter tempPainter(&mPix);
     tempPainter.setPen(QPen(Qt::darkGreen,1));
 
-    for(int i = 1; i < size1; i++){
-        tempPainter.drawLine(controlPoints1[i-1],controlPoints1[i]);
-    }
-
-    for(int i = 1; i < size2; i++){
-        tempPainter.drawLine(controlPoints2[i-1],controlPoints2[i]);
+    for(auto&& list : controlPoints){
+        for(unsigned int i = 1; i < list.size(); ++i){
+            tempPainter.drawLine(list[i-1],list[i]);
+        }
     }
 }
 
@@ -46,23 +88,23 @@ void MainWindow::drawIntersections(){
 
     //calculate intersection points
     vector<QRectF> intersections;
-    for(int i = 0; i < curveSegments.size(); i++){
-        for(int j = 0; j < curveSegments.size(); j++){
+    for(unsigned i = 0; i < curveSegments.size(); ++i){
+        for(unsigned int j = 0; j < curveSegments.size(); ++j){
             if(i != j){
                 intersect(curveSegments[i],curveSegments[j],intersections);
             }
         }
     }
-
+    //draw intersections
     for(auto&& value : intersections){
         tempPainter.drawRect(value);
     }
-    cout<< "number of intersections: " <<intersections.size() << endl;
 }
 
 void MainWindow::drawCurve(){
-    plotBezier(controlPoints1);
-    plotBezier(controlPoints2);
+    for(auto&& list : controlPoints){
+        plotBezier(list);
+    }
 }
 
 void MainWindow::drawBoundingBoxes(){
@@ -81,7 +123,7 @@ void MainWindow::plotBezier(PointList curve){
         QPainter tempPainter(&mPix);
         tempPainter.setPen(QPen(Qt::black,2));
 
-        for(int i = 0; i < curve.size()-1; i++){
+        for(unsigned int i = 0; i < curve.size()-1; i++){
             tempPainter.drawLine(curve[i],curve[i+1]);
         }
 
@@ -94,7 +136,7 @@ void MainWindow::plotBezier(PointList curve){
 
 bool MainWindow::isFlat(const PointList& points) const{
     double maxFlatness = 1.0;
-    for(int i = 1; i< points.size()-1; ++i){
+    for(unsigned int i = 1; i< points.size()-1; ++i){
         double flatness = QLineF(points[i+1] - points[i],points[i] - points[i-1]).length();
         if(flatness < maxFlatness){
             maxFlatness = flatness;
@@ -133,27 +175,27 @@ void MainWindow::intersect(PointList list1, PointList list2,vector<QRectF>& inte
 
 pair<PointList,PointList> MainWindow::deCasteljau(PointList points)const {
     size_t pointSize = points.size();
-    vector<PointList> curvepoints;
+    PointList2D curvepoints;
     curvepoints.push_back(points);
 
-    for(int i = 0 ; i < pointSize-1; i++){
+    for(unsigned int i = 0 ; i < pointSize-1; i++){
         curvepoints.push_back(PointList(pointSize));
     }
 
-    for(int iter = 1; iter < pointSize; iter++){
-        for(int pos = 0; pos < pointSize - iter; pos++){
+    for(unsigned int iter = 1; iter < pointSize; iter++){
+        for(unsigned int pos = 0; pos < pointSize - iter; pos++){
             QPointF result = lerpPoints(curvepoints[iter-1][pos], curvepoints[iter-1][pos+1]);
             curvepoints[iter][pos] = result;
         }
     }
 
     PointList curve1;
-    for(int iter = 0; iter < pointSize; iter++){
+    for(unsigned int iter = 0; iter < pointSize; iter++){
         curve1.push_back(curvepoints[iter][0]);
     }
 
     PointList curve2;
-    for(int iter = 0; iter < pointSize; iter++){
+    for(unsigned int iter = 0; iter < pointSize; iter++){
        curve2.push_back(curvepoints[curvepoints[0].size()-1-iter][iter]);
     }
 
@@ -161,26 +203,20 @@ pair<PointList,PointList> MainWindow::deCasteljau(PointList points)const {
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event){
-    std::cout <<"Press: "<< "x: " << event->localPos().x() << " y: " << event->localPos().y() << std::endl;
-    for(auto&& value : controlPoints1){
-        if(value.x() - pointSize < event->localPos().x() && value.x() + pointSize > event->localPos().x() &&
-           value.y() - pointSize < event->localPos().y() && value.y() + pointSize > event->localPos().y() ){
-            currentMovingPoint = &value;
-            break;
+    //std::cout <<"Press: "<< "x: " << event->localPos().x() << " y: " << event->localPos().y() << std::endl;
+    for(auto&& list : controlPoints){
+        for(auto&& value : list){
+            if(value.x() - pointSize < event->localPos().x() && value.x() + pointSize > event->localPos().x() &&
+               value.y() - pointSize < event->localPos().y() && value.y() + pointSize > event->localPos().y() ){
+                currentMovingPoint = &value;
+                break;
+            }
         }
     }
-    for(auto&& value : controlPoints2){
-        if(value.x() - pointSize < event->localPos().x() && value.x() + pointSize > event->localPos().x() &&
-           value.y() - pointSize < event->localPos().y() && value.y() + pointSize > event->localPos().y() ){
-            currentMovingPoint = &value;
-            break;
-        }
-    }
-    //update();
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event){
-    std::cout <<"Move: "<< "x: " << event->localPos().x() << " y: " << event->localPos().y() << std::endl;
+    //std::cout <<"Move: "<< "x: " << event->localPos().x() << " y: " << event->localPos().y() << std::endl;
     if(currentMovingPoint != NULL){
         currentMovingPoint->setX(event->localPos().x());
         currentMovingPoint->setY(event->localPos().y());
@@ -189,9 +225,8 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event){
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *event){
-    std::cout <<"Release: " << "x: " << event->localPos().x() << " y: " << event->localPos().y() << std::endl;
+    //std::cout <<"Release: " << "x: " << event->localPos().x() << " y: " << event->localPos().y() << std::endl;
     currentMovingPoint = NULL;
-    //update();
 }
 
 void MainWindow::paintEvent(QPaintEvent* event){
@@ -200,11 +235,13 @@ void MainWindow::paintEvent(QPaintEvent* event){
 
     curveSegments.clear();
 
-    drawControlPointLine();
-    drawControlPoints();
-    drawCurve();
-    //drawBoundingBoxes();
-    drawIntersections();
+    if(drawingControlStructure){
+        drawControlPointLine();
+        drawControlPoints();
+    }
+    if(drawingCurve) drawCurve();
+    if(drawingBoundingBoxes) drawBoundingBoxes();
+    if(drawingIntersections) drawIntersections();
 
     painter.drawPixmap(0,0,mPix);
     painter.end();
