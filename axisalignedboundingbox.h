@@ -1,5 +1,6 @@
 #ifndef AXISALIGNEDBOUNDINGBOX_H
 #define AXISALIGNEDBOUNDINGBOX_H
+
 #include <vector>
 #include <QPointF>
 #include <QRectF>

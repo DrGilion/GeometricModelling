@@ -9,4 +9,5 @@ SOURCES += gmuebung.cpp \
     axisalignedboundingbox.cpp
 HEADERS += \
     mainwindow.h \
-    axisalignedboundingbox.h
+    axisalignedboundingbox.h \
+    bezier.h

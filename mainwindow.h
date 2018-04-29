@@ -1,7 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-
 #include <QMainWindow>
 #include <QPainter>
 #include <QMouseEvent>
@@ -25,7 +24,6 @@ public:
     explicit MainWindow(PointList2D pControlpoints,int size = 800, QWidget *parent = 0);
 
     int windowSize;
-    double epsilon = 0.5;
     constexpr static int pointSize = 10;
 
     void generateGUI();
@@ -35,12 +33,6 @@ public:
     void drawIntersections();
     void drawCurve();
     void drawBoundingBoxes();
-    void plotBezier(PointList curve);
-    pair<PointList,PointList> deCasteljau(PointList curve)const;
-    bool isFlat(const PointList& points) const;
-    QPointF lerpPoints(const QPointF& p1,const QPointF& p2, qreal ratio = 0.5) const;
-    void intersect(PointList list1,PointList list2,vector<QRectF>& intersections);
-
 
     ~MainWindow() = default;
 
@@ -57,27 +49,24 @@ private:
     QHBoxLayout* topLayout = new QHBoxLayout(centralWidget);
     QFormLayout* optionsLayout = new QFormLayout(optionsWidget);
 
-    QLineEdit* epsilonOption = new QLineEdit(QString::number(epsilon,'f'));
+    QLineEdit* epsilonOption = NULL;
     QCheckBox* controlStructureBox = new QCheckBox();
     QCheckBox* curveBox = new QCheckBox();
     QCheckBox* intersectionsBox = new QCheckBox();
     QCheckBox* BoundingBoxesBox = new QCheckBox();
 
     QPainter painter;
+    QPainter* tempPainter = NULL;
     QPixmap mPix;
 
     PointList2D controlPoints;
     PointList2D curveSegments;
     QPointF* currentMovingPoint = NULL;
 
-
     bool drawingControlStructure = true;
     bool drawingCurve = true;
     bool drawingIntersections = true;
     bool drawingBoundingBoxes = false;
-
-private slots:
-
 };
 
 #endif // MAINWINDOW_H
