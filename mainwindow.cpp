@@ -15,6 +15,6 @@ MainWindow::MainWindow(int size, QWidget *parent) : QMainWindow(parent){
     PointList curve3 {{700.0,700.0},{550.0,400.0},{700.0,200.0}};
     tabWidget->addTab(new BezierFrame(QSize(size,size),{curve1,curve2,curve3}),QString("Bezier curves"));
 
-    tabWidget->addTab(new BSplineFrame(QSize(size,size)),QString("B-Spline curves"));
+    tabWidget->addTab(new BSplineFrame(QSize(size,size),{curve1}),QString("B-Spline curves"));
 
 }

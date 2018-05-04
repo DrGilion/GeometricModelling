@@ -17,10 +17,10 @@ using namespace std;
 using PointList = vector<QPointF>;
 using PointList2D = vector<PointList>;
 
-class BezierFrame : public BasicFrame{
+class BezierFrame final: public BasicFrame{
 public:
-    BezierFrame(QSize paintAreaSize, PointList2D pControlpoints);
-    constexpr static int pointSize = 15;
+    BezierFrame(const QSize& paintAreaSize, PointList2D pControlpoints);
+
 
     void drawControlPoints();
     void drawControlPointLine();
@@ -28,7 +28,7 @@ public:
     void drawCurve();
     void drawBoundingBoxes();
 
-    QLineEdit* epsilonOption = NULL;
+    QLineEdit* epsilonOption = nullptr;
     QCheckBox* controlStructureBox = new QCheckBox();
     QCheckBox* curveBox = new QCheckBox();
     QCheckBox* intersectionsBox = new QCheckBox();
@@ -41,7 +41,7 @@ public:
 
     PointList2D controlPoints;
     PointList2D curveSegments;
-    QPointF* currentMovingPoint = NULL;
+    QPointF* currentMovingPoint = nullptr;
 
     ~BezierFrame() = default;
 

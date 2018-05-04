@@ -16,4 +16,6 @@ HEADERS += \
     bezier.h \
     basicframe.h \
     bezierframe.h \
-    bsplineframe.h
+    bsplineframe.h \
+    bspline.h \
+    util.h

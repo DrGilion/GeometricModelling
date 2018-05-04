@@ -1,12 +1,13 @@
 #include "bezierframe.h"
 #include "bezier.h"
 
+
 using namespace bezier;
 
-BezierFrame::BezierFrame(QSize paintAreaSize, PointList2D pControlpoints) : BasicFrame(paintAreaSize),controlPoints(pControlpoints){
+BezierFrame::BezierFrame(const QSize& paintAreaSize, PointList2D pControlpoints) : BasicFrame(paintAreaSize),controlPoints(pControlpoints){
 
     epsilonOption = new QLineEdit(QString::number(EPSILON,'f'));
-    QObject::connect(epsilonOption,QLineEdit::returnPressed,this,[&]{
+    QObject::connect(epsilonOption,&QLineEdit::returnPressed,this,[&]{
         EPSILON = epsilonOption->text().toDouble();
         update();
     });
@@ -14,28 +15,28 @@ BezierFrame::BezierFrame(QSize paintAreaSize, PointList2D pControlpoints) : Basi
 
     controlStructureBox->setChecked(drawingControlStructure);
     optionsLayout->addRow("draw control structure :",controlStructureBox );
-    QObject::connect(controlStructureBox,QCheckBox::toggled,this,[&](bool val){
+    QObject::connect(controlStructureBox,&QCheckBox::toggled,this,[&](bool val){
         drawingControlStructure = val;
         update();
     });
 
     curveBox->setChecked(drawingCurve);
     optionsLayout->addRow("draw curve :",curveBox );
-    QObject::connect(curveBox,QCheckBox::toggled,this,[&](bool val){
+    QObject::connect(curveBox,&QCheckBox::toggled,this,[&](bool val){
         drawingCurve = val;
         update();
     });
 
     intersectionsBox->setChecked(drawingIntersections);
     optionsLayout->addRow("draw intersections :",intersectionsBox );
-    QObject::connect(intersectionsBox,QCheckBox::toggled,this,[&](bool val){
+    QObject::connect(intersectionsBox,&QCheckBox::toggled,this,[&](bool val){
         drawingIntersections = val;
         update();
     });
 
     BoundingBoxesBox->setChecked(drawingBoundingBoxes);
     optionsLayout->addRow("draw bounding boxes :",BoundingBoxesBox );
-    QObject::connect(BoundingBoxesBox,QCheckBox::toggled,this,[&](bool val){
+    QObject::connect(BoundingBoxesBox,&QCheckBox::toggled,this,[&](bool val){
         drawingBoundingBoxes = val;
         update();
     });
@@ -94,7 +95,6 @@ void BezierFrame::drawIntersections(){
 
 void BezierFrame::drawBoundingBoxes(){
     painter->setPen(QPen(Qt::blue,1));
-
     for(auto&& value : curveSegments){
         painter->drawRect(AxisAlignedBoundingBox(value).rectangle);
     }
@@ -115,7 +115,7 @@ void BezierFrame::mousePressEvent(QMouseEvent *event){
 
 void BezierFrame::mouseMoveEvent(QMouseEvent *event){
     //std::cout <<"Move: "<< "x: " << event->localPos().x() << " y: " << event->localPos().y() << std::endl;
-    if(currentMovingPoint != NULL){
+    if(currentMovingPoint != nullptr){
         currentMovingPoint->setX(event->localPos().x());
         currentMovingPoint->setY(event->localPos().y());
         update();
@@ -124,7 +124,7 @@ void BezierFrame::mouseMoveEvent(QMouseEvent *event){
 
 void BezierFrame::mouseReleaseEvent(QMouseEvent *event){
     //std::cout <<"Release: " << "x: " << event->localPos().x() << " y: " << event->localPos().y() << std::endl;
-    currentMovingPoint = NULL;
+    currentMovingPoint = nullptr;
 }
 
 void BezierFrame::paintEvent(QPaintEvent* event){

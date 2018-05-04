@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "axisalignedboundingbox.h"
+#include "util.h"
 
 using namespace std;
 using PointList = vector<QPointF>;
@@ -29,10 +30,6 @@ namespace bezier{
         return maxFlatness < EPSILON;
     }
 
-    QPointF lerpPoints(const QPointF& p1,const QPointF& p2, qreal ratio = 0.5){
-        return  p1 + ((p2 - p1) * ratio);
-    }
-
     pair<PointList,PointList> deCasteljau(PointList points){
         size_t pointSize = points.size();
         PointList2D curvepoints;
@@ -44,7 +41,7 @@ namespace bezier{
 
         for(unsigned int iter = 1; iter < pointSize; iter++){
             for(unsigned int pos = 0; pos < pointSize - iter; pos++){
-                QPointF result = lerpPoints(curvepoints[iter-1][pos], curvepoints[iter-1][pos+1]);
+                QPointF result = gmutil::lerpPoints(curvepoints[iter-1][pos], curvepoints[iter-1][pos+1]);
                 curvepoints[iter][pos] = result;
             }
         }
@@ -62,7 +59,7 @@ namespace bezier{
         return make_pair(curve1,curve2);
     }
 
-    void calculateBezier(PointList curve,PointList2D& resultList){
+    void calculateBezier(PointList& curve,PointList2D& resultList){
 
         if(isFlat(curve)){
             resultList.push_back(curve);
@@ -73,7 +70,7 @@ namespace bezier{
         }
     }
 
-    void intersect(PointList list1, PointList list2,vector<QRectF>& intersections){
+    void intersect(PointList& list1, PointList& list2,vector<QRectF>& intersections){
         AxisAlignedBoundingBox box1(list1);
         AxisAlignedBoundingBox box2(list2);
 
