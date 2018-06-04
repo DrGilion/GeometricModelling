@@ -19,7 +19,7 @@ namespace bezier{
 
     static double EPSILON = 0.5;
 
-    bool isFlat(const PointList& points){
+    inline bool isFlat(const PointList& points){
         double maxFlatness = numeric_limits<double>::max();
         for(unsigned int i = 1; i< points.size()-1; ++i){
             double flatness = QLineF(points[i+1] - points[i],points[i] - points[i-1]).length();
@@ -30,7 +30,7 @@ namespace bezier{
         return maxFlatness < EPSILON;
     }
 
-    pair<PointList,PointList> deCasteljau(PointList points){
+    inline pair<PointList,PointList> deCasteljau(PointList points){
         size_t pointSize = points.size();
         PointList2D curvepoints;
         curvepoints.push_back(points);
@@ -59,7 +59,7 @@ namespace bezier{
         return make_pair(curve1,curve2);
     }
 
-    void calculateBezier(PointList& curve,PointList2D& resultList){
+    inline void calculateBezier(PointList& curve,PointList2D& resultList){
 
         if(isFlat(curve)){
             resultList.push_back(curve);
@@ -70,7 +70,7 @@ namespace bezier{
         }
     }
 
-    void intersect(PointList& list1, PointList& list2,vector<QRectF>& intersections){
+    inline void intersect(PointList& list1, PointList& list2,vector<QRectF>& intersections){
         AxisAlignedBoundingBox box1(list1);
         AxisAlignedBoundingBox box2(list2);
 

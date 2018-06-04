@@ -41,7 +41,6 @@ public:
 
     PointList2D controlPoints;
     PointList2D curveSegments;
-    QPointF* currentMovingPoint = nullptr;
 
     ~BezierFrame() = default;
 

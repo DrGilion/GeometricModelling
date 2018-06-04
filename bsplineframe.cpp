@@ -1,6 +1,11 @@
 #include "bsplineframe.h"
 
 #include "util.h"
+#include "bspline.h"
+#include "bezier.h"
+
+using namespace bezier;
+using namespace bspline;
 
 BSplineFrame::BSplineFrame(const QSize& paintAreaSize,PointList& pControlPoints) : BasicFrame(paintAreaSize),controlPoints(pControlPoints) {
     controlStructureBox->setChecked(drawingControlStructure);
@@ -17,13 +22,21 @@ BSplineFrame::BSplineFrame(const QSize& paintAreaSize,PointList& pControlPoints)
         update();
     });
 
-    degreeBox = new QLineEdit(QString::number(degree));
+    degreeBox = new QLineEdit(QString::number(GRADE));
     optionsLayout->addRow("degree :",degreeBox );
     QObject::connect(degreeBox,&QLineEdit::returnPressed,this,[&]{
-        degree = gmutil::clamp(degreeBox->text().toInt(),2,controlPoints.size()-1);
-        degreeBox->setText(QString::number(degree));
+        GRADE = gmutil::clamp(degreeBox->text().toInt(),2,controlPoints.size()-1);
+        degreeBox->setText(QString::number(GRADE));
         update();
     });
+
+    epsilonOption = new QLineEdit(QString::number(EPSILON,'f'));
+    optionsLayout->addRow("Epsilon:",epsilonOption);
+    QObject::connect(epsilonOption,&QLineEdit::returnPressed,this,[&]{
+        EPSILON = epsilonOption->text().toDouble();
+        update();
+    });
+
 
     this->setLayout(topLayout);
 }
@@ -43,6 +56,18 @@ void BSplineFrame::drawControlPointLine(){
 }
 
 void BSplineFrame::drawCurve(){
+    deBoor(controlPoints,curveSegments);
+}
+
+void BSplineFrame::drawBezierPoints(){
+
+}
+
+void BSplineFrame::drawBezierCurve(){
+
+}
+
+void BSplineFrame::insertPoints(){
 
 }
 

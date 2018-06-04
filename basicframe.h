@@ -5,6 +5,7 @@
 #include <QHBoxLayout>
 #include <QFormLayout>
 #include <QLabel>
+#include <QPointF>
 #include <QPainter>
 #include <QPixmap>
 
@@ -17,6 +18,8 @@ public:
     QWidget* optionsWidget = new QWidget;
     QHBoxLayout* topLayout = new QHBoxLayout(this);
     QFormLayout* optionsLayout = new QFormLayout(optionsWidget);
+
+    QPointF* currentMovingPoint = nullptr;
 
     QPainter* painter = nullptr;
     QPixmap mPix;

@@ -11,6 +11,7 @@
 
 using namespace std;
 using PointList = vector<QPointF>;
+using PointList2D = vector<PointList>;
 
 class BSplineFrame final: public BasicFrame{
 public:
@@ -20,15 +21,21 @@ public:
     void drawControlPointLine();
     void drawCurve();
 
+    void drawBezierPoints();
+    void drawBezierCurve();
+
+    void insertPoints();
+
     QCheckBox* controlStructureBox = new QCheckBox();
     QCheckBox* curveBox = new QCheckBox();
     QLineEdit* degreeBox = nullptr;
+    QLineEdit* epsilonOption = nullptr;
 
     bool drawingControlStructure = true;
     bool drawingCurve = true;
-    int degree = 2;
 
     PointList controlPoints;
+    PointList2D curveSegments;
     QPointF* currentMovingPoint = nullptr;
 
     ~BSplineFrame() = default;

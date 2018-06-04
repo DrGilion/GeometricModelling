@@ -11,7 +11,7 @@ BasicFrame::BasicFrame(QSize paintAreaSize) : QWidget(){
     paintArea->setBackgroundRole(QPalette::Base);
     paintArea->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-    optionsWidget->setFixedSize(200,paintAreaSize.height());
+    optionsWidget->setFixedSize(300,paintAreaSize.height());
 }
 
 BasicFrame::~BasicFrame(){
