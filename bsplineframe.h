@@ -36,7 +36,8 @@ public:
 
     PointList controlPoints;
     PointList2D curveSegments;
-    QPointF* currentMovingPoint = nullptr;
+    PointList bezierPoints;
+    PointList2D bezierCurves;
 
     ~BSplineFrame() = default;
 

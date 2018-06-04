@@ -11,36 +11,42 @@
 using namespace std;
 using namespace bezier;
 using PointList = vector<QPointF>;
+using FloatList = vector<qreal>;
 using PointList2D = vector<PointList>;
 
 
 namespace bspline {
-    static int GRADE = 1;
+    static int GRADE = 3;
 
-    void deBoor(const PointList& points,PointList2D& resultList){
+    FloatList calculateKnots(const PointList& points){
         size_t pointSize = points.size();
-        vector<qreal> knotpoints;
+        FloatList knotpoints;
 
-        unsigned int iter = GRADE + pointSize +1;
+        unsigned int maxIter = GRADE + pointSize +1;
 
+        int i = 0;
         //beginning padding
-        for(unsigned int i = 0 ; i < GRADE; i++){
+        for(; i < GRADE; i++){
             knotpoints.push_back(0);
         }
 
-        unsigned int counter = 0;
-        for(counter = 0 ; counter < iter; counter++){
-            knotpoints.push_back(counter);
+        int num = 0;
+        for(; i < pointSize; i++){
+            knotpoints.push_back(num++);
         }
 
         //end padding
-        for(unsigned int i = 0 ; i < GRADE; i++){
-            knotpoints.push_back(counter);
+        for(; i < maxIter; i++){
+            knotpoints.push_back(num);
         }
 
         for(auto val : knotpoints){
             cout << "value: " << val << endl;
         }
+    }
+
+    void calculateDeBoor(const PointList& points,PointList2D& resultList){
+        FloatList knots = calculateKnots(points);
 
         /*for(unsigned int pos = 0; pos < pointSize; pos++){
             //check index before calculating
@@ -62,6 +68,5 @@ namespace bspline {
 
 #endif // BSPLINE
 /*n = 3 m = 6
-0 0 0 0 1 2 3 3 3 3
 
 0 0 0 0 1 2 3 3 3 3*/

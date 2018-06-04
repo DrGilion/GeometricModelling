@@ -5,7 +5,7 @@
 namespace gmutil{
 
     inline int clamp(int num,int min,int max){
-        return num <= min ? min : num >= max ? max : num;
+        return std::max(min, std::min(num, max));
     }
 
     inline QPointF lerpPoints(const QPointF& p1,const QPointF& p2, qreal ratio = 0.5){

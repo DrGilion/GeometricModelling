@@ -1,7 +1,6 @@
 #include "bezierframe.h"
 #include "bezier.h"
 
-
 using namespace bezier;
 
 BezierFrame::BezierFrame(const QSize& paintAreaSize, PointList2D pControlpoints) : BasicFrame(paintAreaSize),controlPoints(pControlpoints){

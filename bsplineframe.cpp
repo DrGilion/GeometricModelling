@@ -56,11 +56,12 @@ void BSplineFrame::drawControlPointLine(){
 }
 
 void BSplineFrame::drawCurve(){
-    deBoor(controlPoints,curveSegments);
+    calculateDeBoor(controlPoints,curveSegments);
 }
 
 void BSplineFrame::drawBezierPoints(){
-
+    painter->setPen(QPen(Qt::green,pointSize));
+    painter->drawPoints(bezierPoints.data(),bezierPoints.size());
 }
 
 void BSplineFrame::drawBezierCurve(){
@@ -95,6 +96,10 @@ void BSplineFrame::mouseReleaseEvent(QMouseEvent *event){
 
 void BSplineFrame::paintEvent(QPaintEvent *event){
     mPix.fill(Qt::white);
+
+    curveSegments.clear();
+    bezierPoints.clear();
+    bezierCurves.clear();
 
     if(drawingControlStructure){
         drawControlPointLine();
