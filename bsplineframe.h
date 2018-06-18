@@ -8,6 +8,7 @@
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QLineEdit>
+#include "customslider.h"
 
 using namespace std;
 using PointList = vector<QPointF>;
@@ -30,9 +31,11 @@ public:
     QCheckBox* curveBox = new QCheckBox();
     QLineEdit* degreeBox = nullptr;
     QLineEdit* epsilonOption = nullptr;
+    CustomSlider* knotSlider = nullptr;
 
     bool drawingControlStructure = true;
     bool drawingCurve = true;
+    vector<qreal> knotvector;
 
     PointList controlPoints;
     PointList2D curveSegments;

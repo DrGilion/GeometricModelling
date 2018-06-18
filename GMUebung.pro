@@ -9,7 +9,8 @@ SOURCES += gmuebung.cpp \
     axisalignedboundingbox.cpp \
     basicframe.cpp \
     bezierframe.cpp \
-    bsplineframe.cpp
+    bsplineframe.cpp \
+    customslider.cpp
 HEADERS += \
     mainwindow.h \
     axisalignedboundingbox.h \
@@ -18,4 +19,5 @@ HEADERS += \
     bezierframe.h \
     bsplineframe.h \
     bspline.h \
-    util.h
+    util.h \
+    customslider.h

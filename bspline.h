@@ -43,6 +43,8 @@ namespace bspline {
         for(auto val : knotpoints){
             cout << "value: " << val << endl;
         }
+
+        return knotpoints;
     }
 
     void calculateDeBoor(const PointList& points,PointList2D& resultList){

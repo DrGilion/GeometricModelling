@@ -37,6 +37,14 @@ BSplineFrame::BSplineFrame(const QSize& paintAreaSize,PointList& pControlPoints)
         update();
     });
 
+    knotvector = calculateKnots(controlPoints);
+    knotSlider = new CustomSlider(knotvector);
+    optionsLayout->addWidget(knotSlider);
+    QObject::connect(knotSlider,&CustomSlider::knotsChanged,this,[&](vector<qreal> val){
+        knotvector = val;
+        update();
+    });
+
 
     this->setLayout(topLayout);
 }
@@ -56,7 +64,7 @@ void BSplineFrame::drawControlPointLine(){
 }
 
 void BSplineFrame::drawCurve(){
-    calculateDeBoor(controlPoints,curveSegments);
+    //calculateDeBoor(controlPoints,curveSegments);
 }
 
 void BSplineFrame::drawBezierPoints(){
