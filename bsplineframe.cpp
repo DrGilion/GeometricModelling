@@ -38,8 +38,8 @@ BSplineFrame::BSplineFrame(const QSize& paintAreaSize,PointList& pControlPoints)
     });
 
     knotvector = calculateKnots(controlPoints);
-    knotSlider = new CustomSlider(knotvector);
-    optionsLayout->addWidget(knotSlider);
+    knotSlider = new CustomSlider(knotvector,GRADE);
+    optionsLayout->addRow("Knots:",knotSlider);
     QObject::connect(knotSlider,&CustomSlider::knotsChanged,this,[&](vector<qreal> val){
         knotvector = val;
         update();
@@ -64,21 +64,16 @@ void BSplineFrame::drawControlPointLine(){
 }
 
 void BSplineFrame::drawCurve(){
-    //calculateDeBoor(controlPoints,curveSegments);
+    calculateDeBoor(controlPoints,knotvector,curvePoints);
+
+    painter->setPen(QPen(Qt::black,2));
+    for(auto&& points : curvePoints){
+        for(unsigned int i = 1; i < points.size(); ++i){
+            painter->drawLine(points[i-1],points[i]);
+        }
+    }
 }
 
-void BSplineFrame::drawBezierPoints(){
-    painter->setPen(QPen(Qt::green,pointSize));
-    painter->drawPoints(bezierPoints.data(),bezierPoints.size());
-}
-
-void BSplineFrame::drawBezierCurve(){
-
-}
-
-void BSplineFrame::insertPoints(){
-
-}
 
 void BSplineFrame::mousePressEvent(QMouseEvent *event){
     for(auto&& value : controlPoints){
@@ -105,9 +100,7 @@ void BSplineFrame::mouseReleaseEvent(QMouseEvent *event){
 void BSplineFrame::paintEvent(QPaintEvent *event){
     mPix.fill(Qt::white);
 
-    curveSegments.clear();
-    bezierPoints.clear();
-    bezierCurves.clear();
+    curvePoints.clear();
 
     if(drawingControlStructure){
         drawControlPointLine();

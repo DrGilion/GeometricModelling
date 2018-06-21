@@ -22,11 +22,6 @@ public:
     void drawControlPointLine();
     void drawCurve();
 
-    void drawBezierPoints();
-    void drawBezierCurve();
-
-    void insertPoints();
-
     QCheckBox* controlStructureBox = new QCheckBox();
     QCheckBox* curveBox = new QCheckBox();
     QLineEdit* degreeBox = nullptr;
@@ -38,9 +33,7 @@ public:
     vector<qreal> knotvector;
 
     PointList controlPoints;
-    PointList2D curveSegments;
-    PointList bezierPoints;
-    PointList2D bezierCurves;
+    PointList2D curvePoints;
 
     ~BSplineFrame() = default;
 
