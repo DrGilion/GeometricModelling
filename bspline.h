@@ -92,7 +92,7 @@ namespace bspline {
         return resultPoints;
     }
 
-    void calculateDeBoor(const PointList& controlPoints,FloatList& knots,PointList2D& resultList){
+    void calculateDeBoor(const PointList& controlPoints,FloatList& knots,PointList2D& resultList,PointList& bezierPoints){
         FloatList x = knots;
         PointList intermediateResult = controlPoints;
 
@@ -113,6 +113,7 @@ namespace bspline {
             PointList tmpControlPoints = PointList(intermediateResult.begin() + i * GRADE, intermediateResult.begin() + (i * GRADE) + GRADE + 1);
             calculateBezier(tmpControlPoints,resultList);
         }
+        bezierPoints = intermediateResult;
 
     }
 }

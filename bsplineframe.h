@@ -33,6 +33,7 @@ public:
     vector<qreal> knotvector;
 
     PointList controlPoints;
+    PointList bezierPoints;
     PointList2D curvePoints;
 
     ~BSplineFrame() = default;

@@ -56,6 +56,10 @@ void BSplineFrame::drawControlPoints(){
 }
 
 void BSplineFrame::drawControlPointLine(){
+
+    painter->setPen(QPen(Qt::green,pointSize));
+    painter->drawPoints(bezierPoints.data(),bezierPoints.size());
+
     painter->setPen(QPen(Qt::darkGreen,1));
 
     for(unsigned int i = 1; i < controlPoints.size(); ++i){
@@ -64,7 +68,7 @@ void BSplineFrame::drawControlPointLine(){
 }
 
 void BSplineFrame::drawCurve(){
-    calculateDeBoor(controlPoints,knotvector,curvePoints);
+    calculateDeBoor(controlPoints,knotvector,curvePoints,bezierPoints);
 
     painter->setPen(QPen(Qt::black,2));
     for(auto&& points : curvePoints){
@@ -72,6 +76,8 @@ void BSplineFrame::drawCurve(){
             painter->drawLine(points[i-1],points[i]);
         }
     }
+
+
 }
 
 
